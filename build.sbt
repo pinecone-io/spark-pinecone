@@ -1,24 +1,36 @@
 import ReleaseTransformations._
 
-ThisBuild / version       := "0.1.0"
-ThisBuild / versionScheme := Some("semver-spec")
-ThisBuild / scalaVersion  := "2.12.15"
-
-ThisBuild / organizationHomepage := Some(url("http://pinecone.io/"))
-ThisBuild / licenses := Seq(
-  ("Pinecone EULA", url("https://www.pinecone.io/thin-client-user-agreement/"))
-)
+lazy val sparkVersion = "3.2.0"
 
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
-
-val sparkVersion = "3.2.0"
 
 lazy val root = (project in file("."))
   .configs(IntegrationTest)
   .settings(
-    name := "spark-pinecone",
+    name                 := "spark-pinecone",
+    organizationName     := "Pinecone Systems",
+    organizationHomepage := Some(url("http://pinecone.io/")),
+    organization         := "io.pinecone",
+    licenses := Seq(("Pinecone EULA", url("https://www.pinecone.io/thin-client-user-agreement/"))),
+    description := "A spark connector for the Pinecone Vector Database",
+    developers := List(
+      Developer(
+        "adamgs",
+        "Adam Gutglick",
+        "adam@pinecone.io",
+        url("https://github.com/pinecone-io")
+      )
+    ),
+    versionScheme := Some("semver-spec"),
+    scalaVersion  := "2.12.15",
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/pinecone-io/spark-pinecone"),
+        "scm:git:git@github.com:pinecone-io/spark-pinecone.git"
+      )
+    ),
+    homepage := Some(url("https://github.com/pinecone-io/spark-pinecone")),
     Defaults.itSettings,
-    organization       := "io.pinecone",
     crossScalaVersions := Seq("2.12.15", "2.13.8"),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
