@@ -3,10 +3,9 @@
 The official [pinecone.io](https://pinecone.io) spark connector.
 
 ## Features
-- Please note that the connector's write operation is not atomic - some vectors might be written before the whole operations fails. 
-In practice this shouldn't cause a serious issue as Pinecone is a key-value store, and re-running the job after removing
-the problematic vectors will result in the desired state without a need to clear the index or calculate some delta from the source data.
-- The client currently only supports batch writing data into pinecone from a specific schema (see the example below) into Pinecone.
+- Please note that the connector's write operation is not atomic - some vectors might be written while others aren't if the operation is stopped or if it fails. 
+In practice this shouldn't cause a serious issue. Pinecone is an idempotent key-value store. Re-running the job will result in the desired state without a need to clear the index or calculate some delta from the source data.
+- The client currently only supports batch writing of data into pinecone from a specific schema (see the example below).
 If you need to use the connector with a streaming pipeline, it is recommended to use a function like `foreachBatch`.
 
 ## Support
