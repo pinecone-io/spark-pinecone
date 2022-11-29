@@ -41,6 +41,8 @@ package object pinecone {
         structBuilder.putFields(key, Value.newBuilder().setStringValue(value.asText()).build())
       } else if (value.isNumber) {
         structBuilder.putFields(key, Value.newBuilder().setNumberValue(value.floatValue()).build())
+      } else if (value.isBoolean) {
+        structBuilder.putFields(key, Value.newBuilder().setBoolValue(value.booleanValue()).build())
       } else if (value.isArray && value.elements().asScala.toArray.forall(_.isTextual)) {
         val arrayElements    = value.elements().asScala.toArray
         val listValueBuilder = ListValue.newBuilder()
