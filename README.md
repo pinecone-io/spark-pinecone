@@ -24,6 +24,51 @@ libraryDependencies += "io.pinecone" %% "spark-pinecone" % "0.1.0"
 
 
 ## Example
+
+To connect to Pinecone with Spark you'll have to retrieve the following information from [your Pinecone console](https://app.pinecone.io)
+
+1. API Key: navigate to your project and click the "API Keys" button on the sidebar
+2. `environment` & `projectName`: check the browser url to fetch the environment. `https://app.pinecone.io/organizations/[org-id]/projects/[environment]:[project_name]/indexes`
+
+
+### PySpark
+
+```python
+
+from pyspark import SparkConf
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, ArrayType, FloatType, StringType
+
+conf = SparkConf().setMaster("local[*]")
+spark = SparkSession.builder().config(conf).getOrCreate()
+
+schema = StructType([
+    StructField("id", StringType(), True),
+    StructField("vector", ArrayType(FloatType()), True),
+    StructField("namespace", StringType(), True),
+    StructField("metadata", StringType(), True),
+])
+
+embeddings = None
+
+df = spark.createDataFrame(data=embeddings, schema=schema)
+
+(
+    df.write
+    .option("pinecone.apiKey", api_key)
+    .option("pinecone.environment", environment)
+    .option("pinecone.projectName", project_name)
+    .option("pinecone.indexName", index_name)
+    .format("io.pinecone.spark.pinecone.Pinecone")
+    .mode("append")
+    .save()
+)
+
+
+```
+
+### Scala
+
 ```scala
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.types._
