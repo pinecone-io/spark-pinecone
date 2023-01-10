@@ -1,12 +1,7 @@
 package io.pinecone.spark.pinecone
 
 import io.pinecone.proto.{UpsertRequest, Vector => PineconeVector}
-import io.pinecone.{
-  PineconeClient,
-  PineconeClientConfig,
-  PineconeConnection,
-  PineconeConnectionConfig
-}
+import io.pinecone.{PineconeClient, PineconeClientConfig, PineconeConnection, PineconeConnectionConfig, PineconeException}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.write.{DataWriter, WriterCommitMessage}
 import org.slf4j.LoggerFactory
@@ -41,47 +36,52 @@ case class PineconeDataWriter(
   var totalVectorsWritten = 0
 
   override def write(record: InternalRow): Unit = {
-    val id        = record.getUTF8String(0).toString
-    val namespace = record.getUTF8String(1).toString
-    val values    = record.getArray(2).toFloatArray().map(float2Float).toIterable.asJava
+    try {
+      val id = record.getUTF8String(0).toString
+      val namespace = record.getUTF8String(1).toString
+      val values = record.getArray(2).toFloatArray().map(float2Float).toIterable.asJava
+      val metadata = record.getUTF8String(3).toString
 
-    val metadata = Option(record.getUTF8String(3)).map(_.toString)
 
-    if (id.length > MAX_ID_LENGTH) {
-      throw VectorIdTooLongException(id)
-    }
+      if (id.length > MAX_ID_LENGTH) {
+        throw VectorIdTooLongException(id)
+      }
 
-    val vectorBuilder = PineconeVector
-      .newBuilder()
-      .setId(id)
-      .addAllValues(values)
+      val vectorBuilder = PineconeVector
+        .newBuilder()
+        .setId(id)
+        .addAllValues(values)
 
-    metadata.foreach(actual => {
-      val metadataStruct = parseAndValidateMetadata(id, actual)
+
+      val metadataStruct = parseAndValidateMetadata(id, metadata)
       vectorBuilder.setMetadata(metadataStruct)
-    })
 
-    val vector = vectorBuilder
-      .build()
+      val vector = vectorBuilder
+        .build()
 
-    if (
-      (currentVectorsInBatch == maxBatchSize) ||
-      (totalVectorSize + vector.getSerializedSize >= MAX_REQUEST_SIZE) // If the vector will push the request over the size limit
-    ) {
-      flushBatchToIndex()
+      if (
+        (currentVectorsInBatch == maxBatchSize) ||
+        (totalVectorSize + vector.getSerializedSize >= MAX_REQUEST_SIZE) // If the vector will push the request over the size limit
+      ) {
+        flushBatchToIndex()
+      }
+
+      val builder = upsertBuilderMap
+        .getOrElseUpdate(
+          namespace, {
+            UpsertRequest.newBuilder().setNamespace(namespace)
+          }
+        )
+
+      builder.addVectors(vector)
+      upsertBuilderMap.update(namespace, builder)
+      currentVectorsInBatch += 1
+      totalVectorSize += vector.getSerializedSize
+    } catch {
+      case e: NullPointerException =>
+        log.error(s"Null values in rows: ${e.getMessage}")
+        throw NullValueException("")
     }
-
-    val builder = upsertBuilderMap
-      .getOrElseUpdate(
-        namespace, {
-          UpsertRequest.newBuilder().setNamespace(namespace)
-        }
-      )
-
-    builder.addVectors(vector)
-    upsertBuilderMap.update(namespace, builder)
-    currentVectorsInBatch += 1
-    totalVectorSize += vector.getSerializedSize
   }
 
   override def commit(): WriterCommitMessage = {
