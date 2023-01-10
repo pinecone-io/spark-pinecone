@@ -1,5 +1,4 @@
 import ReleaseTransformations._
-
 lazy val sparkVersion = "3.2.0"
 
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
@@ -34,13 +33,32 @@ lazy val root = (project in file("."))
     crossScalaVersions := Seq("2.12.15", "2.13.8"),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
-      "io.pinecone"       % "pinecone-client" % "0.2.1",
+      "io.pinecone"       % "pinecone-client" % "0.2.2",
       "org.scalatest"    %% "scalatest"       % "3.2.11"     % "it,test",
       "org.apache.spark" %% "spark-core"      % sparkVersion % "provided,test",
       "org.apache.spark" %% "spark-sql"       % sparkVersion % "provided,test",
       "org.apache.spark" %% "spark-catalyst"  % sparkVersion % "provided,test"
     ),
     Test / fork       := true,
+    assembly / assemblyShadeRules := Seq(
+      ShadeRule
+        .rename("com.google.protobuf.**" -> "shaded.protobuf.@1")
+        .inAll,
+      ShadeRule
+        .rename("com.google.common.**" -> "shaded.guava.@1")
+        .inAll
+    ),
+    assembly / assemblyMergeStrategy := {
+      case PathList("META-INF", xs@_*) => MergeStrategy.concat
+      case x => MergeStrategy.first
+    },
+//    Build assembly jar, this builds an uberJar with all dependencies
+    assembly / assemblyJarName := s"${name.value}-${version.value}.jar",
+    assembly / artifact := {
+      val art = (assembly / artifact).value
+      art.withClassifier(Some("assembly"))
+    },
+    publishLocal / skip := false,
     releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
     publishTo         := sonatypePublishToBundle.value,
     releaseProcess := Seq[ReleaseStep](
