@@ -39,6 +39,7 @@ lazy val root = (project in file("."))
       "org.apache.spark" %% "spark-sql"       % sparkVersion % "provided,test",
       "org.apache.spark" %% "spark-catalyst"  % sparkVersion % "provided,test"
     ),
+    Test / fork       := true,
     assembly / assemblyShadeRules := Seq(
       ShadeRule
         .rename("com.google.protobuf.**" -> "shaded.protobuf.@1")
