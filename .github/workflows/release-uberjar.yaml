@@ -1,6 +1,6 @@
 name: Build and Publish Uber JAR
 
-on: [workflow_dispatch,pull_request]
+on: [workflow_dispatch]
 
 jobs:
   build:
@@ -22,7 +22,6 @@ jobs:
         run: sbt assembly
         
       - name: Publish Uber JAR
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'publish') }}
         uses: actions/upload-artifact@v2
         with:
           name: spark-pinecone-uber-jar.jar
