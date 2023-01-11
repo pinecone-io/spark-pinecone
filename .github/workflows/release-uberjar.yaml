@@ -29,7 +29,7 @@ jobs:
         run: echo $(sbt -no-colors 'print version' | tail -n 1)
 
       - name: Output Version
-        run: echo "JAR_VERSION=${{ steps.version.outputs.snapshot }}" >> >> $GITHUB_ENV
+        run: echo "JAR_VERSION=${{ steps.version.outputs.snapshot }}" >> $GITHUB_ENV
 
       - name: Publish Uber JAR
         uses: actions/upload-artifact@v2
