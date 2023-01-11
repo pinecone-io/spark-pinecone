@@ -29,7 +29,7 @@ jobs:
         run: echo $(sbt -no-colors 'print version' | tail -n 1)
 
       - name: Output Version
-        run: echo "${{ steps.version.outputs.snapshot }} :rocket:" >> $JAR_VERSION
+        run: echo "${{ steps.version.outputs.snapshot }}" >> $JAR_VERSION
 
       - name: Publish Uber JAR
         uses: actions/upload-artifact@v2
