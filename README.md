@@ -43,8 +43,8 @@ conf = SparkConf().setMaster("local[*]")
 spark = SparkSession.builder().config(conf).getOrCreate()
 
 schema = StructType([
-    StructField("id", StringType(), True),
-    StructField("vector", ArrayType(FloatType()), True),
+    StructField("id", StringType(), False),
+    StructField("vector", ArrayType(FloatType()), False),
     StructField("namespace", StringType(), True),
     StructField("metadata", StringType(), True),
 ])
@@ -81,9 +81,9 @@ object MainApp extends App {
 
   val df = spark.read
     .schema(new StructType()
-      .add("id", StringType)
+      .add("id", StringType,false)
       .add("namespace", StringType)
-      .add("vector", ArrayType(FloatType))
+      .add("vector", ArrayType(FloatType),false)
       .add("metadata", StringType))
     .json("src/test/resources/sample.jsonl")
 

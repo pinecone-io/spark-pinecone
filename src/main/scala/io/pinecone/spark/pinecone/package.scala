@@ -13,7 +13,7 @@ package object pinecone {
     new StructType()
       .add("id", StringType)
       .add("namespace", StringType)
-      .add("vector", ArrayType(FloatType))
+      .add("values", ArrayType(FloatType))
       .add("metadata", StringType)
 
   private[pinecone] val MAX_ID_LENGTH     = 512
@@ -92,5 +92,10 @@ package object pinecone {
   case class VectorIdTooLongException(vectorId: String) extends PineconeException {
     override def getMessage: String =
       s"Vector with ID starting with ${vectorId.substring(0, 8)}. Must be 512 characters or less. actual: ${vectorId.length}"
+  }
+
+  case class NullValueException(vectorId:String) extends PineconeException {
+    override def getMessage: String = "Null id or value column found in row. Please ensure id and values are not null."
+
   }
 }

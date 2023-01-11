@@ -12,6 +12,8 @@ class BasicIntegrationSpec extends AnyFlatSpec with should.Matchers {
     val spark = SparkSession.builder().config(conf).getOrCreate()
 
     val df = spark.read
+      .option("multiLine", value = true)
+      .option("mode", "PERMISSIVE")
       .schema(COMMON_SCHEMA)
       .json("src/it/resources/sample.jsonl")
       .repartition(2)
@@ -23,13 +25,16 @@ class BasicIntegrationSpec extends AnyFlatSpec with should.Matchers {
       PineconeOptions.PINECONE_INDEX_NAME_CONF   -> System.getenv("PINECONE_INDEX")
     )
 
-    df.write
-      .options(pineconeOptions)
-      .format("io.pinecone.spark.pinecone.Pinecone")
-      .mode(SaveMode.Append)
-      .save()
-
     df.count() should be(7)
+
+//    If env variable is set run tests else skip
+    if(System.getenv("TEST_RUNNING_INDEX") != null) {
+      df.write
+        .format("io.pinecone.spark.pinecone")
+        .options(pineconeOptions)
+        .mode(SaveMode.Overwrite)
+        .save()
+    }
   }
 
 }
