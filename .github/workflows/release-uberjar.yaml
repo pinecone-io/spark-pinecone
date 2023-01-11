@@ -35,5 +35,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: spark-pinecone-uber-jar-${{ env.JAR_VERSION }}.jar
-          path: spark-pinecone/target/scala-2.12/spark-pinecone-${{ env.JAR_VERSION }}.jar
+          path: /home/runner/work/spark-pinecone/target/scala-2.12/spark-pinecone-${{ env.JAR_VERSION }}.jar
 
