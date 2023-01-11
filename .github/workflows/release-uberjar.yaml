@@ -20,9 +20,15 @@ jobs:
 
       - name: Build Uber JAR
         run: sbt assembly
-        
+
+      - name: Get Version
+        id: version
+        run: echo ::set-output name=snapshot::$(sbt -no-colors 'print version' | tail -n 1)
+
       - name: Publish Uber JAR
         uses: actions/upload-artifact@v2
         with:
-          name: spark-pinecone-uber-jar.jar
-          path: spark-pinecone/target/scala-*/spark-pinecone-*.jar
+          version:
+          name: spark-pinecone-uber-jar-{{version}}.jar
+          path: spark-pinecone/target/scala-2.12/spark-pinecone-{{version}}.jar
+
