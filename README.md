@@ -44,7 +44,7 @@ spark = SparkSession.builder().config(conf).getOrCreate()
 
 schema = StructType([
     StructField("id", StringType(), False),
-    StructField("vector", ArrayType(FloatType()), False),
+    StructField("values", ArrayType(FloatType()), False),
     StructField("namespace", StringType(), True),
     StructField("metadata", StringType(), True),
 ])
@@ -83,7 +83,7 @@ object MainApp extends App {
     .schema(new StructType()
       .add("id", StringType,false)
       .add("namespace", StringType)
-      .add("vector", ArrayType(FloatType),false)
+      .add("values", ArrayType(FloatType),false)
       .add("metadata", StringType))
     .json("src/test/resources/sample.jsonl")
 
