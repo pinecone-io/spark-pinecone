@@ -58,7 +58,11 @@ lazy val root = (project in file("."))
       val art = (assembly / artifact).value
       art.withClassifier(Some("assembly"))
     },
-    publishLocal / skip := false,
+    addArtifact(assembly / artifact, assembly),
+    publishLocal / skip := true,
+    ThisBuild / publishMavenStyle := true,
+//  Expects credentials stored in ~/.sbt/sonatype_credentials. This is a standard practice
+    credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials"),
     releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
     publishTo         := sonatypePublishToBundle.value,
     releaseProcess := Seq[ReleaseStep](
