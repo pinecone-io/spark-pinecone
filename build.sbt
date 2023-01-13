@@ -2,6 +2,7 @@ import ReleaseTransformations._
 lazy val sparkVersion = "3.2.0"
 
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 
 lazy val root = (project in file("."))
   .configs(IntegrationTest)
