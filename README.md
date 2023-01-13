@@ -22,6 +22,7 @@ We also release a shaded uber jar to maven that's compatible with Databricks.
   <classifier>assembly</classifier>
 </dependency>
 ```
+The shaded jar is also available in the latest release.
 
 ## Usage
 
