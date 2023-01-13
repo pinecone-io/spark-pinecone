@@ -18,6 +18,12 @@ lazy val root = (project in file("."))
         "Adam Gutglick",
         "adam@pinecone.io",
         url("https://github.com/pinecone-io")
+      ),
+      Developer(
+        "rajat08",
+        "Rajat Tripathi",
+        "rajat@pinecone.io",
+        url("https://github.com/pinecone-io")
       )
     ),
     versionScheme := Some("semver-spec"),
