@@ -13,7 +13,15 @@ This client currently only supports Spark 3.2.0, Scala 2.12.X or 2.13.X and Java
 
 ### Databricks and friends
 Due to various libraries provided by Databricks (and other runtimes), we recommend you shade the `com.google.protobuf` and `com.google.common`, due to conflicts with the underlying java client.
-We plan to release a shaded version in the future.
+We also release a shaded uber jar to maven that's compatible with Databricks.
+```
+<dependency>
+  <groupId>io.pinecone</groupId>
+  <artifactId>spark-pinecone_2.12</artifactId>
+  <version>0.1.1</version>
+  <classifier>assembly</classifier>
+</dependency>
+```
 
 ## Usage
 
