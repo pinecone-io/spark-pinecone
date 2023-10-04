@@ -11,7 +11,7 @@ lazy val root = (project in file("."))
     organizationName     := "Pinecone Systems",
     organizationHomepage := Some(url("http://pinecone.io/")),
     organization         := "io.pinecone",
-    licenses := Seq(("Pinecone EULA", url("https://www.pinecone.io/thin-client-user-agreement/"))),
+    licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
     description := "A spark connector for the Pinecone Vector Database",
     developers := List(
       Developer(
