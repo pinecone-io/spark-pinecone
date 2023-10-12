@@ -1,5 +1,5 @@
 import ReleaseTransformations._
-lazy val sparkVersion = "3.2.0"
+lazy val sparkVersion = "3.4.1"
 
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
@@ -13,20 +13,6 @@ lazy val root = (project in file("."))
     organization         := "io.pinecone",
     licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
     description := "A spark connector for the Pinecone Vector Database",
-    developers := List(
-      Developer(
-        "adamgs",
-        "Adam Gutglick",
-        "adam@pinecone.io",
-        url("https://github.com/pinecone-io")
-      ),
-      Developer(
-        "rajat08",
-        "Rajat Tripathi",
-        "rajat@pinecone.io",
-        url("https://github.com/pinecone-io")
-      )
-    ),
     versionScheme := Some("semver-spec"),
     scalaVersion  := "2.12.15",
     scmInfo := Some(
@@ -40,7 +26,7 @@ lazy val root = (project in file("."))
     crossScalaVersions := Seq("2.12.15", "2.13.8"),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
-      "io.pinecone"       % "pinecone-client" % "0.2.2",
+      "io.pinecone"       % "pinecone-client" % "0.6.0",
       "org.scalatest"    %% "scalatest"       % "3.2.11"     % "it,test",
       "org.apache.spark" %% "spark-core"      % sparkVersion % "provided,test",
       "org.apache.spark" %% "spark-sql"       % sparkVersion % "provided,test",
