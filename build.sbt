@@ -1,5 +1,6 @@
 import ReleaseTransformations._
-lazy val sparkVersion = "3.4.1"
+
+lazy val sparkVersion = "3.5.0"
 
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
@@ -7,14 +8,14 @@ ThisBuild / sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 lazy val root = (project in file("."))
   .configs(IntegrationTest)
   .settings(
-    name                 := "spark-pinecone",
-    organizationName     := "Pinecone Systems",
+    name := "spark-pinecone",
+    organizationName := "Pinecone Systems",
     organizationHomepage := Some(url("http://pinecone.io/")),
-    organization         := "io.pinecone",
+    organization := "io.pinecone",
     licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
     description := "A spark connector for the Pinecone Vector Database",
     versionScheme := Some("semver-spec"),
-    scalaVersion  := "2.12.15",
+    scalaVersion := "2.12.15",
     scmInfo := Some(
       ScmInfo(
         url("https://github.com/pinecone-io/spark-pinecone"),
@@ -26,13 +27,13 @@ lazy val root = (project in file("."))
     crossScalaVersions := Seq("2.12.15", "2.13.8"),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
-      "io.pinecone"       % "pinecone-client" % "0.6.0",
-      "org.scalatest"    %% "scalatest"       % "3.2.11"     % "it,test",
-      "org.apache.spark" %% "spark-core"      % sparkVersion % "provided,test",
-      "org.apache.spark" %% "spark-sql"       % sparkVersion % "provided,test",
-      "org.apache.spark" %% "spark-catalyst"  % sparkVersion % "provided,test"
+      "io.pinecone" % "pinecone-client" % "0.6.0",
+      "org.scalatest" %% "scalatest" % "3.2.11" % "it,test",
+      "org.apache.spark" %% "spark-core" % sparkVersion % "provided,test",
+      "org.apache.spark" %% "spark-sql" % sparkVersion % "provided,test",
+      "org.apache.spark" %% "spark-catalyst" % sparkVersion % "provided,test"
     ),
-    Test / fork       := true,
+    Test / fork := true,
     assembly / assemblyShadeRules := Seq(
       ShadeRule
         .rename("com.google.protobuf.**" -> "shaded.protobuf.@1")
@@ -45,7 +46,7 @@ lazy val root = (project in file("."))
       case PathList("META-INF", xs@_*) => MergeStrategy.concat
       case x => MergeStrategy.first
     },
-//    Build assembly jar, this builds an uberJar with all dependencies
+    // Build assembly jar, this builds an uberJar with all dependencies
     assembly / assemblyJarName := s"${name.value}-${version.value}.jar",
     assembly / artifact := {
       val art = (assembly / artifact).value
@@ -54,10 +55,10 @@ lazy val root = (project in file("."))
     addArtifact(assembly / artifact, assembly),
     publishLocal / skip := true,
     ThisBuild / publishMavenStyle := true,
-//  Expects credentials stored in ~/.sbt/sonatype_credentials. This is a standard practice
+    // Expects credentials stored in ~/.sbt/sonatype_credentials. This is a standard practice
     credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials"),
     releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
-    publishTo         := sonatypePublishToBundle.value,
+    publishTo := sonatypePublishToBundle.value,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
