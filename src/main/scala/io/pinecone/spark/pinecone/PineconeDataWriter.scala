@@ -1,7 +1,7 @@
 package io.pinecone.spark.pinecone
 
 import io.pinecone.proto.{UpsertRequest, Vector => PineconeVector}
-import io.pinecone.{PineconeClient, PineconeClientConfig, PineconeConnection, PineconeConnectionConfig, PineconeException}
+import io.pinecone.{PineconeClient, PineconeClientConfig, PineconeConnection, PineconeConnectionConfig}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.write.{DataWriter, WriterCommitMessage}
 import org.slf4j.LoggerFactory
