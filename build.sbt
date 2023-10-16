@@ -1,6 +1,5 @@
 import ReleaseTransformations._
 
-lazy val version = "0.1.3"
 lazy val sparkVersion = "3.5.0"
 
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
@@ -68,7 +67,7 @@ lazy val root = (project in file("."))
       case x => MergeStrategy.first
     },
     // Build assembly jar, this builds an uberJar with all dependencies
-    assembly / assemblyJarName := s"${name.value}-${version}.jar",
+    assembly / assemblyJarName := s"${name.value}-${version.value}.jar",
     assembly / artifact := {
       val art = (assembly / artifact).value
       art.withClassifier(Some("assembly"))
@@ -82,12 +81,14 @@ lazy val root = (project in file("."))
     publishTo := sonatypePublishToBundle.value,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
+      inquireVersions,
       runClean,
       runTest,
       setReleaseVersion,
       commitReleaseVersion,
       tagRelease,
       releaseStepCommandAndRemaining("+publishSigned"),
-      releaseStepCommand("sonatypeBundleRelease")
+      releaseStepCommand("sonatypeBundleRelease"),
+      pushChanges
     )
   )
