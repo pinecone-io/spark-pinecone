@@ -14,6 +14,26 @@ lazy val root = (project in file("."))
     organization := "io.pinecone",
     licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
     description := "A spark connector for the Pinecone Vector Database",
+    developers := List(
+      Developer(
+        "adamgs",
+        "Adam Gutglick",
+        "adam@pinecone.io",
+        url("https://github.com/pinecone-io")
+      ),
+      Developer(
+        "rajat08",
+        "Rajat Tripathi",
+        "rajat@pinecone.io",
+        url("https://github.com/pinecone-io")
+      ),
+      Developer(
+        "rohanshah18",
+        "Rohan Shah",
+        "rohan.s@pinecone.io",
+        url("https://github.com/pinecone-io")
+      )
+    ),
     versionScheme := Some("semver-spec"),
     scalaVersion := "2.12.15",
     scmInfo := Some(
