@@ -88,9 +88,6 @@ lazy val root = (project in file("."))
       commitReleaseVersion,
       tagRelease,
       releaseStepCommandAndRemaining("+publishSigned"),
-      releaseStepCommand("sonatypeBundleRelease"),
-      setNextVersion,
-      commitNextVersion,
-      pushChanges
+      releaseStepCommand("sonatypeBundleRelease")
     )
   )
