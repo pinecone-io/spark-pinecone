@@ -81,7 +81,6 @@ lazy val root = (project in file("."))
     publishTo := sonatypePublishToBundle.value,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
-      inquireVersions,
       runClean,
       runTest,
       setReleaseVersion,
