@@ -78,6 +78,7 @@ lazy val root = (project in file("."))
     // Expects credentials stored in ~/.sbt/sonatype_credentials. This is a standard practice
     credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials"),
     releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
+    assembly / publishTo := sonatypePublishToBundle.value,
     publishTo := sonatypePublishToBundle.value,
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
