@@ -9,20 +9,11 @@ In practice this shouldn't cause a serious issue. Pinecone is an idempotent key-
 If you need to use the connector with a streaming pipeline, it is recommended to use a function like `foreachBatch`.
 
 ## Support
-This client currently only supports Spark 3.2.0, Scala 2.12.X or 2.13.X and Java 8+.
+This client currently only supports Spark 3.5.0, Scala 2.12.X or 2.13.X and Java 8+.
 
 ### Databricks and friends
-Due to various libraries provided by Databricks (and other runtimes), we recommend you shade the `com.google.protobuf` and `com.google.common`, due to conflicts with the underlying java client.
-We also release a shaded uber jar to maven that's compatible with Databricks.
-```
-<dependency>
-  <groupId>io.pinecone</groupId>
-  <artifactId>spark-pinecone_2.12</artifactId>
-  <version>0.1.1</version>
-  <classifier>assembly</classifier>
-</dependency>
-```
-The shaded jar is also available in the latest release.
+Due to various libraries provided by Databricks (and other runtimes), please use the assembly jar from s3 for now.
+S3 path for assembly jar: s3://pinecone-jars/spark-pinecone-uberjar.jar
 
 ## Usage
 
