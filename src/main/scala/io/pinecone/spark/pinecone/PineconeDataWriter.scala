@@ -1,6 +1,6 @@
 package io.pinecone.spark.pinecone
 
-import io.pinecone.proto.{UpsertRequest, Vector => PineconeVector}
+import io.pinecone.proto.{SparseValues, UpsertRequest, Vector => PineconeVector}
 import io.pinecone.{PineconeClient, PineconeClientConfig, PineconeConnection, PineconeConnectionConfig}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.write.{DataWriter, WriterCommitMessage}
@@ -39,9 +39,10 @@ case class PineconeDataWriter(
     try {
       val id = record.getUTF8String(0).toString
       val namespace = record.getUTF8String(1).toString
-      val values = record.getArray(2).toFloatArray().map(float2Float).toIterable.asJava
+      val values = record.getArray(2).toFloatArray().map(float2Float).toIterable
       val metadata = record.getUTF8String(3).toString
-
+      val sparseId = record.getArray(4).toIntArray().map(int2Integer).toIterable
+      val sparseValues = record.getArray(5).toFloatArray().map(float2Float).toIterable
 
       if (id.length > MAX_ID_LENGTH) {
         throw VectorIdTooLongException(id)
@@ -50,8 +51,18 @@ case class PineconeDataWriter(
       val vectorBuilder = PineconeVector
         .newBuilder()
         .setId(id)
-        .addAllValues(values)
 
+      if (values.nonEmpty) {
+        vectorBuilder.addAllValues(values.asJava)
+      }
+
+      if (sparseId.nonEmpty && sparseValues.nonEmpty) {
+        val sparseDataBuilder = SparseValues.newBuilder()
+          .addAllIndices(sparseId.asJava)
+          .addAllValues(sparseValues.asJava)
+
+        vectorBuilder.setSparseValues(sparseDataBuilder.build())
+      }
 
       val metadataStruct = parseAndValidateMetadata(id, metadata)
       vectorBuilder.setMetadata(metadataStruct)
@@ -59,8 +70,7 @@ case class PineconeDataWriter(
       val vector = vectorBuilder
         .build()
 
-      if (
-        (currentVectorsInBatch == maxBatchSize) ||
+      if ((currentVectorsInBatch == maxBatchSize) ||
         (totalVectorSize + vector.getSerializedSize >= MAX_REQUEST_SIZE) // If the vector will push the request over the size limit
       ) {
         flushBatchToIndex()
