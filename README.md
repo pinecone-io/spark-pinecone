@@ -63,9 +63,8 @@ df = spark.createDataFrame(data=embeddings, schema=schema)
 
 ### Scala
 ```scala
-import io.pinecone.spark.pinecone.PineconeOptions
+import io.pinecone.spark.pinecone.{COMMON_SCHEMA, PineconeOptions}
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.types.{ArrayType, FloatType, StringType, StructType}
 import org.apache.spark.sql.{SaveMode, SparkSession}
 
 object MainApp extends App {
