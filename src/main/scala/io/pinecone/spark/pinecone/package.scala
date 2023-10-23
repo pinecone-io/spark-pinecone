@@ -3,7 +3,7 @@ package io.pinecone.spark
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.protobuf.{ListValue, Struct, Value}
 import org.apache.spark.sql.connector.write.WriterCommitMessage
-import org.apache.spark.sql.types.{ArrayType, FloatType, IntegerType, StringType, StructType}
+import org.apache.spark.sql.types.{ArrayType, FloatType, IntegerType, StringType, StructField, StructType}
 
 import scala.collection.JavaConverters._
 
@@ -15,8 +15,12 @@ package object pinecone {
       .add("namespace", StringType)
       .add("values", ArrayType(FloatType))
       .add("metadata", StringType)
-      .add("sparse_id", ArrayType(IntegerType, containsNull = true), nullable = true)
-      .add("sparse_values", ArrayType(FloatType, containsNull = true), nullable = true)
+      .add("sparse_values", StructType(
+        Array(
+          StructField("indices", ArrayType(IntegerType, containsNull = true), nullable = true),
+          StructField("values", ArrayType(FloatType, containsNull = true), nullable = true)
+        )
+      ))
 
   private[pinecone] val MAX_ID_LENGTH = 512
   private[pinecone] val MAX_METADATA_SIZE = 5 * math.pow(10, 3) // 5KB

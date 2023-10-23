@@ -41,8 +41,10 @@ case class PineconeDataWriter(
       val namespace = record.getUTF8String(1).toString
       val values = record.getArray(2).toFloatArray().map(float2Float).toIterable
       val metadata = record.getUTF8String(3).toString
-      val sparseId = record.getArray(4).toIntArray().map(int2Integer).toIterable
-      val sparseValues = record.getArray(5).toFloatArray().map(float2Float).toIterable
+
+      val sparseValuesStruct = record.getStruct(4,2)
+      val sparseId = sparseValuesStruct.getArray(0).toIntArray().map(int2Integer).toIterable
+      val sparseValues = sparseValuesStruct.getArray(1).toFloatArray().map(float2Float).toIterable
 
       if (id.length > MAX_ID_LENGTH) {
         throw VectorIdTooLongException(id)
