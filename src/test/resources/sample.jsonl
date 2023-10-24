@@ -1,7 +1,0 @@
-[{"id":  "v1", "namespace": "default", "values":  [1, 2,3],"metadata": ""},
-{"id":  "v2", "namespace": "default", "values":  [3, 2, 1],"metadata": ""},
-{"namespace": "default", "values":  [1, 4, 9], "id":  "v3", "metadata": ""},
-{"id":  "v4", "namespace": "default", "values":  [1, 1, 2], "metadata":  {"key":  "value"}},
-{"id":  "v5", "namespace": "default", "values":  [3, 5, 8]},
-{"id":  "v6", "namespace": "default", "values":  [13, 21, 34]},
-{"id":  "v7", "namespace": "default", "values":  [5, 5, 5], "metadata":  {"hello":  ["world", "you"], "numbers": "or not", "actual_number":  5.2, "round":  3}}]

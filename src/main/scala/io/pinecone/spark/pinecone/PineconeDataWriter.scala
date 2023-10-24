@@ -38,13 +38,8 @@ case class PineconeDataWriter(
   override def write(record: InternalRow): Unit = {
     try {
       val id = record.getUTF8String(0).toString
-      val namespace = record.getUTF8String(1).toString
+      val namespace = if(!record.isNullAt(1)) record.getUTF8String(1).toString else ""
       val values = record.getArray(2).toFloatArray().map(float2Float).toIterable
-      val metadata = record.getUTF8String(3).toString
-
-      val sparseValuesStruct = record.getStruct(4,2)
-      val sparseId = sparseValuesStruct.getArray(0).toIntArray().map(int2Integer).toIterable
-      val sparseValues = sparseValuesStruct.getArray(1).toFloatArray().map(float2Float).toIterable
 
       if (id.length > MAX_ID_LENGTH) {
         throw VectorIdTooLongException(id)
@@ -58,16 +53,25 @@ case class PineconeDataWriter(
         vectorBuilder.addAllValues(values.asJava)
       }
 
-      if (sparseId.nonEmpty && sparseValues.nonEmpty) {
-        val sparseDataBuilder = SparseValues.newBuilder()
-          .addAllIndices(sparseId.asJava)
-          .addAllValues(sparseValues.asJava)
-
-        vectorBuilder.setSparseValues(sparseDataBuilder.build())
+      if (!record.isNullAt(3)) {
+        val metadata = record.getUTF8String(3).toString
+        val metadataStruct = parseAndValidateMetadata(id, metadata)
+        vectorBuilder.setMetadata(metadataStruct)
       }
 
-      val metadataStruct = parseAndValidateMetadata(id, metadata)
-      vectorBuilder.setMetadata(metadataStruct)
+      if (!record.isNullAt(4)) {
+        val sparseVectorStruct = record.getStruct(4, 2)
+        if (!sparseVectorStruct.isNullAt(0) && !sparseVectorStruct.isNullAt(1)) {
+          val sparseId = sparseVectorStruct.getArray(0).toIntArray().map(int2Integer).toIterable
+          val sparseValues = sparseVectorStruct.getArray(1).toFloatArray().map(float2Float).toIterable
+
+          val sparseDataBuilder = SparseValues.newBuilder()
+            .addAllIndices(sparseId.asJava)
+            .addAllValues(sparseValues.asJava)
+
+          vectorBuilder.setSparseValues(sparseDataBuilder.build())
+        }
+      }
 
       val vector = vectorBuilder
         .build()
