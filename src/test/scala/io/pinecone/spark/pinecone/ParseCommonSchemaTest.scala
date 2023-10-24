@@ -50,10 +50,10 @@ class ParseCommonSchemaTest extends AnyFlatSpec with should.Matchers {
   // Use the common test function for each test case
   testInvalidJSON(s"$inputFilePath/invalidUpsertInput1.jsonl",
     "throw exception for missing id")
-    testInvalidJSON(s"$inputFilePath/invalidUpsertInput2.jsonl",
-      "throw exception for missing values")
-    testInvalidJSON(s"$inputFilePath/invalidUpsertInput3.jsonl",
-      "throw exception for missing sparse vector indices")
-    testInvalidJSON(s"$inputFilePath/invalidUpsertInput4.jsonl",
-      "throw exception for missing sparse vector values")
+  testInvalidJSON(s"$inputFilePath/invalidUpsertInput2.jsonl",
+    "throw exception for missing values")
+  testInvalidJSON(s"$inputFilePath/invalidUpsertInput3.jsonl",
+    "throw exception for missing sparse vector indices")
+  testInvalidJSON(s"$inputFilePath/invalidUpsertInput4.jsonl",
+    "throw exception for missing sparse vector values")
 }

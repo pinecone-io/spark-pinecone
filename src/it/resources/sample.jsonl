@@ -7,7 +7,7 @@
       2,
       3
     ],
-    "metadata": "",
+    "metadata": "{\"hello\":  [\"world\", \"you\"], \"numbers\": \"or not\", \"actual_number\":  5.2, \"round\":  3}",
     "sparse_values": {
       "indices": [
         0,
@@ -21,23 +21,11 @@
   },
   {
     "id": "v2",
-    "namespace": "default",
     "values": [
       3,
       2,
       1
-    ],
-    "metadata": "",
-    "sparse_values": {
-      "indices": [
-        1,
-        3
-      ],
-      "values": [
-        100,
-        101
-      ]
-    }
+    ]
   },
   {
     "namespace": "default",
@@ -47,25 +35,17 @@
       9
     ],
     "id": "v3",
-    "metadata": "",
-    "sparse_values": {
-      "indices": [],
-      "values": []
-    }
+    "metadata": ""
   },
   {
     "id": "v4",
-    "namespace": "default",
+    "namespace": "",
     "values": [
       1,
       1,
       2
     ],
-    "metadata": "{\"key\":  \"value\"}",
-    "sparse_values": {
-      "indices": [],
-      "values": []
-    }
+    "metadata": "{\"key\":  \"value\"}"
   },
   {
     "id": "v5",
@@ -77,8 +57,12 @@
     ],
     "metadata": "{\"key\":  \"value\"}",
     "sparse_values": {
-      "indices": [],
-      "values": []
+      "indices": [
+        1
+      ],
+      "values": [
+        4
+      ]
     }
   },
   {
@@ -89,24 +73,16 @@
       21,
       34
     ],
-    "metadata": "",
-    "sparse_values": {
-      "indices": [],
-      "values": []
-    }
+    "metadata": ""
   },
   {
     "id": "v7",
     "namespace": "default",
     "values": [
       5,
-      5,
-      5
+      6,
+      7
     ],
-    "metadata": "{\"hello\":  [\"world\", \"you\"], \"numbers\": \"or not\", \"actual_number\":  5.2, \"round\":  3}",
-    "sparse_values": {
-      "indices": [],
-      "values": []
-    }
+    "metadata": "{\"hello\":  [\"world\", \"you\"], \"numbers\": \"or not\", \"actual_number\":  5.2, \"round\":  3}"
   }
 ]
