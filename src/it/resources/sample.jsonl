@@ -7,7 +7,15 @@
       2,
       3
     ],
-    "metadata": "{\"hello\":  [\"world\", \"you\"], \"numbers\": \"or not\", \"actual_number\":  5.2, \"round\":  3}",
+    "metadata": {
+      "hello": [
+        "world",
+        "you"
+      ],
+      "numbers": "or not",
+      "actual_number": 5.2,
+      "round": 3
+    },
     "sparse_values": {
       "indices": [
         0,
@@ -45,7 +53,9 @@
       1,
       2
     ],
-    "metadata": "{\"key\":  \"value\"}"
+    "metadata": {
+      "key": "value"
+    }
   },
   {
     "id": "v5",
@@ -55,7 +65,9 @@
       5,
       8
     ],
-    "metadata": "{\"key\":  \"value\"}",
+    "metadata": {
+      "key": "value"
+    },
     "sparse_values": {
       "indices": [
         1
@@ -83,6 +95,14 @@
       6,
       7
     ],
-    "metadata": "{\"hello\":  [\"world\", \"you\"], \"numbers\": \"or not\", \"actual_number\":  5.2, \"round\":  3}"
+    "metadata": {
+      "hello": [
+        "world",
+        "you"
+      ],
+      "numbers": "or not",
+      "actual_number": 5.2,
+      "round": 3
+    }
   }
 ]
