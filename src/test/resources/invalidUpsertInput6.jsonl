@@ -1,0 +1,18 @@
+[
+  {
+    "id": "v1",
+    "values": [
+      3,
+      2,
+      1
+    ],
+    "sparse_values": {
+      "indices": [
+        null
+      ],
+      "values": [
+        1
+      ]
+    }
+  }
+]
