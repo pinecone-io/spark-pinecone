@@ -16,8 +16,8 @@ package object pinecone {
       .add("metadata", StringType, nullable = true)
       .add("sparse_values", StructType(
         Array(
-          StructField("indices", ArrayType(IntegerType, containsNull = true), nullable = true),
-          StructField("values", ArrayType(FloatType, containsNull = true), nullable = true)
+          StructField("indices", ArrayType(IntegerType, containsNull = false), nullable = false),
+          StructField("values", ArrayType(FloatType, containsNull = false), nullable = false)
         )
       ), nullable = true)
 

@@ -7,6 +7,10 @@
       1
     ],
     "sparse_values": {
+      "indices": [
+        1,
+        2
+      ]
     }
   }
 ]
