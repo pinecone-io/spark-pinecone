@@ -35,32 +35,46 @@ To connect to Pinecone with Spark you'll have to retrieve the following informat
 ```python
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, ArrayType, FloatType, StringType
+from pyspark.sql.types import StructType, StructField, ArrayType, FloatType, StringType, IntegerType
 
-conf = SparkConf().setMaster("local[*]")
-spark = SparkSession.builder().config(conf).getOrCreate()
+# Your API key, environment, project name, and index name
+api_key = "PINECONE_API_KEY"
+environment = "PINECONE_ENVIRONMENT"
+project_name = "PINECONE_PROJECT_ID"
+index_name = "PINECONE_INDEX_NAME"
 
-schema = StructType([
+COMMON_SCHEMA = StructType([
     StructField("id", StringType(), False),
-    StructField("values", ArrayType(FloatType()), False),
     StructField("namespace", StringType(), True),
+    StructField("values", ArrayType(FloatType(), False), False),
     StructField("metadata", StringType(), True),
+    StructField("sparse_values", StructType([
+        StructField("indices", ArrayType(IntegerType(), False), False),
+        StructField("values", ArrayType(FloatType(), False), False)
+    ]), True)
 ])
 
-embeddings = None
+# Initialize Spark
+spark = SparkSession.builder.getOrCreate()
 
-df = spark.createDataFrame(data=embeddings, schema=schema)
+# Read the file and apply the schema
+df = spark.read \
+    .option("multiLine", value = True) \
+    .option("mode", "PERMISSIVE") \
+    .schema(COMMON_SCHEMA) \
+    .json("/FileStore/tables/sample-4.jsonl")
 
-(
-    df.write
-    .option("pinecone.apiKey", api_key)
-    .option("pinecone.environment", environment)
-    .option("pinecone.projectName", project_name)
-    .option("pinecone.indexName", index_name)
-    .format("io.pinecone.spark.pinecone.Pinecone")
-    .mode("append")
+# Show if the read was successful
+df.show()
+
+df.write \
+    .option("pinecone.apiKey", api_key) \
+    .option("pinecone.environment", environment) \
+    .option("pinecone.projectName", project_name) \
+    .option("pinecone.indexName", index_name) \
+    .format("io.pinecone.spark.pinecone.Pinecone") \
+    .mode("append") \
     .save()
-)
 ```
 
 ### Scala
