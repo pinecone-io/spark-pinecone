@@ -8,9 +8,9 @@ In practice this shouldn't cause a serious issue. Pinecone is an idempotent key-
 If you need to use the connector with a streaming pipeline, it is recommended to use a function like `foreachBatch`.
 
 ## Support
-This client currently only supports Spark 3.5.0, Scala 2.12.X or 2.13.X and Java 8+.
-- For Scala 2.12, use `spark-pinecone_2.12.jar`.
-- For Scala 2.13, use `spark-pinecone_2.13.jar`.
+This client currently supports Spark 3.5.0, Scala 2.12.X or 2.13.X and Java 8+.
+- For Scala 2.12, use `spark-pinecone_2.12.jar`: https://central.sonatype.com/artifact/io.pinecone/spark-pinecone_2.12.
+- For Scala 2.13, use `spark-pinecone_2.13.jar`: https://central.sonatype.com/artifact/io.pinecone/spark-pinecone_2.13.
 
 Make sure to add the correct JAR file to your project's dependencies according to your Scala version.
 
@@ -19,12 +19,6 @@ Due to various libraries provided by Databricks (and other runtimes), please use
 S3 path for assembly jar: 
 1. v0.2.1 (latest): s3://pinecone-jars/0.2.1/spark-pinecone-uberjar.jar
 2. v0.1.4: s3://pinecone-jars/spark-pinecone-uberjar.jar
-
-## Usage
-add the following snippet to your `built.sbt` file:
-```scala
-libraryDependencies += "io.pinecone" %% "spark-pinecone" % "<spark_pinecone_sdk_version>" // example of the spark_pinecone_sdk_version => 0.1.4 and you can get the latest version from maven central or release notes.
-```
 
 ## Example
 To connect to Pinecone with Spark you'll have to retrieve the following information from [your Pinecone console](https://app.pinecone.io)
