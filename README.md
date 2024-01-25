@@ -17,8 +17,9 @@ Make sure to add the correct JAR file to your project's dependencies according t
 ### Databricks and friends
 Due to various libraries provided by Databricks (and other runtimes), please use the assembly jar from s3 for now.
 S3 path for assembly jar: 
-1. v0.2.1 (latest): s3://pinecone-jars/0.2.1/spark-pinecone-uberjar.jar
-2. v0.1.4: s3://pinecone-jars/spark-pinecone-uberjar.jar
+1. v0.2.2 (latest): s3://pinecone-jars/0.2.2/spark-pinecone-uberjar.jar
+2. v0.2.1: s3://pinecone-jars/0.2.1/spark-pinecone-uberjar.jar
+3. v0.1.4: s3://pinecone-jars/spark-pinecone-uberjar.jar
 
 ## Example
 To connect to Pinecone with Spark you'll have to retrieve the following information from [your Pinecone console](https://app.pinecone.io)
