@@ -3,7 +3,7 @@ package io.pinecone.spark
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.protobuf.{ListValue, Struct, Value}
 import org.apache.spark.sql.connector.write.WriterCommitMessage
-import org.apache.spark.sql.types.{ArrayType, FloatType, IntegerType, StringType, StructField, StructType}
+import org.apache.spark.sql.types.{ArrayType, FloatType, LongType, StringType, StructField, StructType}
 
 import scala.collection.JavaConverters._
 
@@ -16,7 +16,7 @@ package object pinecone {
       .add("metadata", StringType, nullable = true)
       .add("sparse_values", StructType(
         Array(
-          StructField("indices", ArrayType(IntegerType, containsNull = false), nullable = false),
+          StructField("indices", ArrayType(LongType, containsNull = false), nullable = false),
           StructField("values", ArrayType(FloatType, containsNull = false), nullable = false)
         )
       ), nullable = true)

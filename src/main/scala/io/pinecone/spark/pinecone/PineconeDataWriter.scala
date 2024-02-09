@@ -62,7 +62,7 @@ case class PineconeDataWriter(
       if (!record.isNullAt(4)) {
         val sparseVectorStruct = record.getStruct(4, 2)
         if (!sparseVectorStruct.isNullAt(0) && !sparseVectorStruct.isNullAt(1)) {
-          val sparseId = sparseVectorStruct.getArray(0).toIntArray().map(int2Integer).toIterable
+          val sparseId = sparseVectorStruct.getArray(0).toLongArray().map(_.toInt).map(int2Integer).toIterable
           val sparseValues = sparseVectorStruct.getArray(1).toFloatArray().map(float2Float).toIterable
 
           val sparseDataBuilder = SparseValues.newBuilder()
