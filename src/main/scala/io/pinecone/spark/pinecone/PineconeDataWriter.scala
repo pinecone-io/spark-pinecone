@@ -1,7 +1,8 @@
 package io.pinecone.spark.pinecone
 
+import io.pinecone.clients.Index
+import io.pinecone.configs.{PineconeConfig, PineconeConnection}
 import io.pinecone.proto.{SparseValues, UpsertRequest, Vector => PineconeVector}
-import io.pinecone.{PineconeClient, PineconeClientConfig, PineconeConnection, PineconeConnectionConfig}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.write.{DataWriter, WriterCommitMessage}
 import org.slf4j.LoggerFactory
@@ -16,15 +17,19 @@ case class PineconeDataWriter(
 ) extends DataWriter[InternalRow]
     with Serializable {
   private val log = LoggerFactory.getLogger(getClass)
-  private val config = new PineconeClientConfig()
-    .withApiKey(options.apiKey)
-    .withEnvironment(options.environment)
-    .withProjectName(options.projectName)
-    .withServerSideTimeoutSec(10)
+//  private val config = new PineconeClientConfig()
+//    .withApiKey(options.apiKey)
+//    .withEnvironment(options.environment)
+//    .withProjectName(options.projectName)
+//    .withServerSideTimeoutSec(10)
 
-  private val pineconeClient = new PineconeClient(config)
-  private val conn: PineconeConnection =
-    pineconeClient.connect(new PineconeConnectionConfig().withIndexName(options.indexName));
+//  private val pineconeClient = new PineconeClient(config)
+//  private val conn: PineconeConnection =
+//    pineconeClient.connect(new PineconeConnectionConfig().withIndexName(options.indexName));
+
+  private val conn: PineconeConnection = new PineconeConnection(new PineconeConfig(options.apiKey))
+  private val pinecone = new io.pinecone.clients.Pinecone.Builder(options.apiKey).build()
+  private val index:Index = pinecone.getIndexConnection(options.indexName)
 
   private var upsertBuilderMap      = mutable.Map[String, UpsertRequest.Builder]()
   private var currentVectorsInBatch = 0
@@ -37,6 +42,8 @@ case class PineconeDataWriter(
 
   override def write(record: InternalRow): Unit = {
     try {
+      // ToDo: remove manual logic of building upsert request
+      // ToDo: Add vectors to a VectorsMap <String: NameSpace, Vectors: Vectors>
       val id = record.getUTF8String(0).toString
       val namespace = if(!record.isNullAt(1)) record.getUTF8String(1).toString else ""
       val values = record.getArray(2).toFloatArray().map(float2Float).toIterable
@@ -122,13 +129,14 @@ case class PineconeDataWriter(
   /** Frees up all resources before the Writer is shutdown
     */
   private def cleanup(): Unit = {
-    conn.close()
+    index.close()
   }
 
   /** Sends all data pinecone and resets the Writer's state.
     */
   private def flushBatchToIndex(): Unit = {
     log.debug(s"Sending ${upsertBuilderMap.size} requests to Pinecone index")
+    // Add index.upsert()
     for (builder <- upsertBuilderMap.values) {
       val request  = builder.build()
       val response = conn.getBlockingStub.upsert(request)

@@ -19,21 +19,21 @@ class BasicIntegrationSpec extends AnyFlatSpec with should.Matchers {
       .repartition(2)
 
     val pineconeOptions = Map(
-      PineconeOptions.PINECONE_API_KEY_CONF -> System.getenv("PINECONE_API_KEY"),
-      PineconeOptions.PINECONE_ENVIRONMENT_CONF -> System.getenv("PINECONE_ENVIRONMENT"),
-      PineconeOptions.PINECONE_PROJECT_NAME_CONF -> System.getenv("PINECONE_PROJECT"),
-      PineconeOptions.PINECONE_INDEX_NAME_CONF -> System.getenv("PINECONE_INDEX")
+      PineconeOptions.PINECONE_API_KEY_CONF -> "5754d57b-68e3-45fb-8803-e83fce92f354",
+      PineconeOptions.PINECONE_ENVIRONMENT_CONF -> "us-east-1-aws",
+      PineconeOptions.PINECONE_PROJECT_NAME_CONF -> "f8e8d52",
+      PineconeOptions.PINECONE_INDEX_NAME_CONF -> "test1"
     )
 
     df.count() should be(7)
 
     // If env variable is set run tests else skip
-    if (System.getenv("TEST_RUNNING_INDEX") != null) {
+//    if (System.getenv("TEST_RUNNING_INDEX") != null) {
       df.write
-        .format("io.pinecone.spark.pinecone")
+        .format("io.pinecone.spark.pinecone.Pinecone")
         .options(pineconeOptions)
-        .mode(SaveMode.Overwrite)
+        .mode(SaveMode.Append)
         .save()
-    }
+//    }
   }
 }
