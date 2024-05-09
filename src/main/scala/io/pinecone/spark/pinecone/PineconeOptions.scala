@@ -4,7 +4,7 @@ import PineconeOptions._
 import org.apache.spark.sql.util.CaseInsensitiveStringMap
 
 class PineconeOptions(config: CaseInsensitiveStringMap) extends Serializable {
-  private val DEFAULT_BATCH_SIZE = 1000
+  private val DEFAULT_BATCH_SIZE = 100
 
   val maxBatchSize: Int =
     config
