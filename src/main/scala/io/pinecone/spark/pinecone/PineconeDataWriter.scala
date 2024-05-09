@@ -1,7 +1,7 @@
 package io.pinecone.spark.pinecone
 
 import io.pinecone.proto.{SparseValues, UpsertRequest, Vector => PineconeVector}
-import io.pinecone.{PineconeClient, PineconeClientConfig, PineconeConnection, PineconeConnectionConfig}
+import io.pinecone.configs.{PineconeConfig, PineconeConnection}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.write.{DataWriter, WriterCommitMessage}
 import org.slf4j.LoggerFactory
@@ -10,25 +10,19 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 case class PineconeDataWriter(
-    partitionId: Int,
-    taskId: Long,
-    options: PineconeOptions
-) extends DataWriter[InternalRow]
-    with Serializable {
+                               partitionId: Int,
+                               taskId: Long,
+                               options: PineconeOptions
+                             ) extends DataWriter[InternalRow]
+  with Serializable {
   private val log = LoggerFactory.getLogger(getClass)
-  private val config = new PineconeClientConfig()
-    .withApiKey(options.apiKey)
-    .withEnvironment(options.environment)
-    .withProjectName(options.projectName)
-    .withServerSideTimeoutSec(10)
-
-  private val pineconeClient = new PineconeClient(config)
-  private val conn: PineconeConnection =
-    pineconeClient.connect(new PineconeConnectionConfig().withIndexName(options.indexName));
-
-  private var upsertBuilderMap      = mutable.Map[String, UpsertRequest.Builder]()
+  private val config: PineconeConfig = new PineconeConfig(options.apiKey)
+  private val pinecone: io.pinecone.clients.Pinecone = new io.pinecone.clients.Pinecone.Builder(options.apiKey).build()
+  config.setHost(pinecone.describeIndex(options.indexName).getHost)
+  private val conn: PineconeConnection = new PineconeConnection(config)
+  private var upsertBuilderMap = mutable.Map[String, UpsertRequest.Builder]()
   private var currentVectorsInBatch = 0
-  private var totalVectorSize       = 0
+  private var totalVectorSize = 0
 
   private val maxBatchSize = options.maxBatchSize
 
@@ -38,7 +32,7 @@ case class PineconeDataWriter(
   override def write(record: InternalRow): Unit = {
     try {
       val id = record.getUTF8String(0).toString
-      val namespace = if(!record.isNullAt(1)) record.getUTF8String(1).toString else ""
+      val namespace = if (!record.isNullAt(1)) record.getUTF8String(1).toString else ""
       val values = record.getArray(2).toFloatArray().map(float2Float).toIterable
 
       if (id.length > MAX_ID_LENGTH) {
@@ -62,7 +56,7 @@ case class PineconeDataWriter(
       if (!record.isNullAt(4)) {
         val sparseVectorStruct = record.getStruct(4, 2)
         if (!sparseVectorStruct.isNullAt(0) && !sparseVectorStruct.isNullAt(1)) {
-          val sparseId = sparseVectorStruct.getArray(0).toIntArray().map(int2Integer).toIterable
+          val sparseId = sparseVectorStruct.getArray(0).toLongArray().map(_.toInt).map(int2Integer).toIterable
           val sparseValues = sparseVectorStruct.getArray(1).toFloatArray().map(float2Float).toIterable
 
           val sparseDataBuilder = SparseValues.newBuilder()

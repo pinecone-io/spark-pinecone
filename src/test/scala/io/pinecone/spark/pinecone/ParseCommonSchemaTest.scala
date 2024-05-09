@@ -13,14 +13,10 @@ class ParseCommonSchemaTest extends AnyFlatSpec with should.Matchers {
   private val inputFilePath = System.getProperty("user.dir") + "/src/test/resources"
 
   private val apiKey = "some_api_key"
-  private val environment = "us-east4-gcp"
-  private val projectName = "f8e8d52"
   private val indexName = "step-test"
 
   private val pineconeOptions: Map[String, String] = Map(
     PineconeOptions.PINECONE_API_KEY_CONF -> apiKey,
-    PineconeOptions.PINECONE_ENVIRONMENT_CONF -> environment,
-    PineconeOptions.PINECONE_PROJECT_NAME_CONF -> projectName,
     PineconeOptions.PINECONE_INDEX_NAME_CONF -> indexName
   )
 

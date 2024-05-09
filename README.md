@@ -96,8 +96,6 @@ object MainApp extends App {
 
   val pineconeOptions = Map(
     PineconeOptions.PINECONE_API_KEY_CONF -> apiKey,
-    PineconeOptions.PINECONE_ENVIRONMENT_CONF -> environment,
-    PineconeOptions.PINECONE_PROJECT_NAME_CONF -> projectName,
     PineconeOptions.PINECONE_INDEX_NAME_CONF -> indexName
   )
 
