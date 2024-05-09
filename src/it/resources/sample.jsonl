@@ -18,9 +18,9 @@
     },
     "sparse_values": {
       "indices": [
-        -5,
         0,
-        2
+        2,
+        4294967295
       ],
       "values": [
         4.5,

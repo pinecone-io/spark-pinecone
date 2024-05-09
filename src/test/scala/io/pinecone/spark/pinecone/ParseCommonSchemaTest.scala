@@ -48,6 +48,28 @@ class ParseCommonSchemaTest extends AnyFlatSpec with should.Matchers {
     }
   }
 
+  def testInvalidSparseIndices(file: String, testName: String): Unit = {
+    it should testName in {
+      val sparkException = intercept[org.apache.spark.SparkException] {
+        val df = spark.read
+          .option("multiLine", value = true)
+          .option("mode", "PERMISSIVE")
+          .schema(COMMON_SCHEMA)
+          .json(file)
+          .repartition(2)
+
+        df.write
+          .options(pineconeOptions)
+          .format("io.pinecone.spark.pinecone.Pinecone")
+          .mode(SaveMode.Append)
+          .save()
+      }
+      sparkException
+        .getCause
+        .toString should include("java.lang.IllegalArgumentException: Sparse indices are out of range for unsigned 32-bit integers.")
+    }
+  }
+
   testInvalidJSON(s"$inputFilePath/invalidUpsertInput1.jsonl",
     "throw exception for missing id")
   testInvalidJSON(s"$inputFilePath/invalidUpsertInput2.jsonl",
@@ -62,4 +84,8 @@ class ParseCommonSchemaTest extends AnyFlatSpec with should.Matchers {
     "throw exception for null in sparse vector indices")
   testInvalidJSON(s"$inputFilePath/invalidUpsertInput7.jsonl",
     "throw exception for null in sparse vector values")
+  testInvalidSparseIndices(s"$inputFilePath/invalidUpsertInput8.jsonl",
+    "throw exception for invalid sparse vector indices")
+  testInvalidSparseIndices(s"$inputFilePath/invalidUpsertInput9.jsonl",
+    "throw exception for invalid sparse vector indices2")
 }

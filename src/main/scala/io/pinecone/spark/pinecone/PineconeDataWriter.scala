@@ -1,6 +1,7 @@
 package io.pinecone.spark.pinecone
 
 import io.pinecone.proto.{SparseValues, UpsertRequest, Vector => PineconeVector}
+import io.pinecone.clients.{Pinecone => PineconeClient}
 import io.pinecone.configs.{PineconeConfig, PineconeConnection}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.write.{DataWriter, WriterCommitMessage}
@@ -17,7 +18,7 @@ case class PineconeDataWriter(
   with Serializable {
   private val log = LoggerFactory.getLogger(getClass)
   private val config: PineconeConfig = new PineconeConfig(options.apiKey)
-  private val pinecone: io.pinecone.clients.Pinecone = new io.pinecone.clients.Pinecone.Builder(options.apiKey).build()
+  private val pinecone: PineconeClient = new PineconeClient.Builder(options.apiKey).build()
   config.setHost(pinecone.describeIndex(options.indexName).getHost)
   private val conn: PineconeConnection = new PineconeConnection(config)
   private var upsertBuilderMap = mutable.Map[String, UpsertRequest.Builder]()
@@ -56,7 +57,13 @@ case class PineconeDataWriter(
       if (!record.isNullAt(4)) {
         val sparseVectorStruct = record.getStruct(4, 2)
         if (!sparseVectorStruct.isNullAt(0) && !sparseVectorStruct.isNullAt(1)) {
-          val sparseId = sparseVectorStruct.getArray(0).toLongArray().map(_.toInt).map(int2Integer).toIterable
+          val sparseIndices = sparseVectorStruct.getArray(0).toLongArray()
+
+          if (sparseIndices.exists(index => index < 0 || index > 0xFFFFFFFFL)) {
+            throw new IllegalArgumentException("Sparse indices are out of range for unsigned 32-bit integers.")
+          }
+
+          val sparseId = sparseIndices.map(_.toInt).map(int2Integer).toIterable
           val sparseValues = sparseVectorStruct.getArray(1).toFloatArray().map(float2Float).toIterable
 
           val sparseDataBuilder = SparseValues.newBuilder()
