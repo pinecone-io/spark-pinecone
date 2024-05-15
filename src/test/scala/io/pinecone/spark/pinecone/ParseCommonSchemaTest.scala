@@ -13,14 +13,10 @@ class ParseCommonSchemaTest extends AnyFlatSpec with should.Matchers {
   private val inputFilePath = System.getProperty("user.dir") + "/src/test/resources"
 
   private val apiKey = "some_api_key"
-  private val environment = "us-east4-gcp"
-  private val projectName = "f8e8d52"
   private val indexName = "step-test"
 
   private val pineconeOptions: Map[String, String] = Map(
     PineconeOptions.PINECONE_API_KEY_CONF -> apiKey,
-    PineconeOptions.PINECONE_ENVIRONMENT_CONF -> environment,
-    PineconeOptions.PINECONE_PROJECT_NAME_CONF -> projectName,
     PineconeOptions.PINECONE_INDEX_NAME_CONF -> indexName
   )
 
@@ -52,6 +48,27 @@ class ParseCommonSchemaTest extends AnyFlatSpec with should.Matchers {
     }
   }
 
+  def testInvalidSparseIndices(file: String, testName: String): Unit = {
+    it should testName in {
+      val sparkException = intercept[org.apache.spark.SparkException] {
+        val df = spark.read
+          .option("multiLine", value = true)
+          .option("mode", "PERMISSIVE")
+          .schema(COMMON_SCHEMA)
+          .json(file)
+          .repartition(2)
+
+        df.write
+          .options(pineconeOptions)
+          .format("io.pinecone.spark.pinecone.Pinecone")
+          .mode(SaveMode.Append)
+          .save()
+      }
+      sparkException.getCause.toString should include("java.lang.IllegalArgumentException:")
+      sparkException.getCause.toString should include("is out of range for unsigned 32-bit integers")
+    }
+  }
+
   testInvalidJSON(s"$inputFilePath/invalidUpsertInput1.jsonl",
     "throw exception for missing id")
   testInvalidJSON(s"$inputFilePath/invalidUpsertInput2.jsonl",
@@ -66,4 +83,8 @@ class ParseCommonSchemaTest extends AnyFlatSpec with should.Matchers {
     "throw exception for null in sparse vector indices")
   testInvalidJSON(s"$inputFilePath/invalidUpsertInput7.jsonl",
     "throw exception for null in sparse vector values")
+  testInvalidSparseIndices(s"$inputFilePath/invalidUpsertInput8.jsonl",
+    "throw exception for invalid sparse vector indices")
+  testInvalidSparseIndices(s"$inputFilePath/invalidUpsertInput9.jsonl",
+    "throw exception for invalid sparse vector indices2")
 }

@@ -12,16 +12,18 @@
         "world",
         "you"
       ],
-      "numbers": "or not",
+      "some_string": "or not",
       "actual_number": 5.2,
       "round": 3
     },
     "sparse_values": {
       "indices": [
         0,
-        2
+        2,
+        4294967295
       ],
       "values": [
+        4.5,
         5.5,
         5
       ]
@@ -100,7 +102,7 @@
         "world",
         "you"
       ],
-      "numbers": "or not",
+      "some_string": "or not",
       "actual_number": 5.2,
       "round": 3
     }

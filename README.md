@@ -34,8 +34,6 @@ from pyspark.sql.types import StructType, StructField, ArrayType, FloatType, Str
 
 # Your API key, environment, project name, and index name
 api_key = "PINECONE_API_KEY"
-environment = "PINECONE_ENVIRONMENT"
-project_name = "PINECONE_PROJECT_ID"
 index_name = "PINECONE_INDEX_NAME"
 
 COMMON_SCHEMA = StructType([
@@ -64,8 +62,6 @@ df.show()
 
 df.write \
     .option("pinecone.apiKey", api_key) \
-    .option("pinecone.environment", environment) \
-    .option("pinecone.projectName", project_name) \
     .option("pinecone.indexName", index_name) \
     .format("io.pinecone.spark.pinecone.Pinecone") \
     .mode("append") \
@@ -96,8 +92,6 @@ object MainApp extends App {
 
   val pineconeOptions = Map(
     PineconeOptions.PINECONE_API_KEY_CONF -> apiKey,
-    PineconeOptions.PINECONE_ENVIRONMENT_CONF -> environment,
-    PineconeOptions.PINECONE_PROJECT_NAME_CONF -> projectName,
     PineconeOptions.PINECONE_INDEX_NAME_CONF -> indexName
   )
 
