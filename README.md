@@ -76,8 +76,6 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 
 object MainApp extends App {
   val apiKey = "PINECONE_API_KEY"
-  val environment = "PINECONE_ENVIRONMENT"
-  val projectName = "PINECONE_PROJECT_NAME"
   val indexName = "PINECONE_INDEX_NAME"
 
   val conf = new SparkConf()
