@@ -59,8 +59,11 @@ case class PineconeDataWriter(
         if (!sparseVectorStruct.isNullAt(0) && !sparseVectorStruct.isNullAt(1)) {
           val sparseIndices = sparseVectorStruct.getArray(0).toLongArray()
 
-          if (sparseIndices.exists(index => index < 0 || index > 0xFFFFFFFFL)) {
-            throw new IllegalArgumentException("Sparse indices are out of range for unsigned 32-bit integers.")
+          sparseIndices.find { index =>
+            if (index < 0 || index > 0xFFFFFFFFL) {
+              throw new IllegalArgumentException(s"Sparse index $index is out of range for unsigned 32-bit integers.")
+            }
+            false
           }
 
           val sparseId = sparseIndices.map(_.toInt).map(int2Integer).toIterable

@@ -64,9 +64,8 @@ class ParseCommonSchemaTest extends AnyFlatSpec with should.Matchers {
           .mode(SaveMode.Append)
           .save()
       }
-      sparkException
-        .getCause
-        .toString should include("java.lang.IllegalArgumentException: Sparse indices are out of range for unsigned 32-bit integers.")
+      sparkException.getCause.toString should include("java.lang.IllegalArgumentException:")
+      sparkException.getCause.toString should include("is out of range for unsigned 32-bit integers")
     }
   }
 
