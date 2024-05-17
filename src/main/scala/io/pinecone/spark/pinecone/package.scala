@@ -22,7 +22,7 @@ package object pinecone {
       ), nullable = true)
 
   private[pinecone] val MAX_ID_LENGTH = 512
-  private[pinecone] val MAX_METADATA_SIZE = 5 * math.pow(10, 3) // 5KB
+  private[pinecone] val MAX_METADATA_SIZE = 40 * math.pow(10, 3) // 40KB
   private[pinecone] val MAX_REQUEST_SIZE = 2 * math.pow(10, 6) // 2MB
 
   /** Parses the metadata of a vector from a JSON string representation to a ProtoBuf struct
