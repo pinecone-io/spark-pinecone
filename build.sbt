@@ -47,7 +47,7 @@ lazy val root = (project in file("."))
     crossScalaVersions := Seq("2.12.15", "2.13.8"),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     libraryDependencies ++= Seq(
-      "io.pinecone" % "pinecone-client" % "1.0.0",
+      "io.pinecone" % "pinecone-client" % "1.2.2",
       "org.scalatest" %% "scalatest" % "3.2.11" % "it,test",
       "org.apache.spark" %% "spark-core" % sparkVersion % "provided,test",
       "org.apache.spark" %% "spark-sql" % sparkVersion % "provided,test",

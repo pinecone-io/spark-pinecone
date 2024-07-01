@@ -17,7 +17,7 @@ case class PineconeDataWriter(
                              ) extends DataWriter[InternalRow]
   with Serializable {
   private val log = LoggerFactory.getLogger(getClass)
-  private val config: PineconeConfig = new PineconeConfig(options.apiKey)
+  private val config: PineconeConfig = new PineconeConfig(options.apiKey, options.sourceTag)
   private val pinecone: PineconeClient = new PineconeClient.Builder(options.apiKey).build()
   config.setHost(pinecone.describeIndex(options.indexName).getHost)
   private val conn: PineconeConnection = new PineconeConnection(config)
