@@ -61,6 +61,7 @@ df = spark.read \
 # Show if the read was successful
 df.show()
 
+# Write the DataFrame to Pinecone 
 df.write \
     .option("pinecone.apiKey", api_key) \
     .option("pinecone.indexName", index_name) \
@@ -76,7 +77,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.sql.{SaveMode, SparkSession}
 
 object MainApp extends App {
-  # Your API key and index name
+  // Your API key and index name
   val apiKey = "PINECONE_API_KEY"
   val indexName = "PINECONE_INDEX_NAME"
 
@@ -102,7 +103,8 @@ object MainApp extends App {
 
   // Show if the read was successful
   df.show(df.count().toInt)
-
+  
+  // Write the DataFrame to Pinecone using the defined options
   df.write
     .options(pineconeOptions)
     .format("io.pinecone.spark.pinecone.Pinecone")
