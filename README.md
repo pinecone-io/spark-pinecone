@@ -33,7 +33,7 @@ from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, ArrayType, FloatType, StringType, LongType
 
-# Your API key, environment, project name, and index name
+# Your API key and index name
 api_key = "PINECONE_API_KEY"
 index_name = "PINECONE_INDEX_NAME"
 
@@ -76,24 +76,31 @@ import org.apache.spark.SparkConf
 import org.apache.spark.sql.{SaveMode, SparkSession}
 
 object MainApp extends App {
+  # Your API key and index name
   val apiKey = "PINECONE_API_KEY"
   val indexName = "PINECONE_INDEX_NAME"
 
+  // Configure Spark to run locally with all available cores
   val conf = new SparkConf()
     .setMaster("local[*]")
+
+  // Create a Spark session with the defined configuration
   val spark = SparkSession.builder().config(conf).getOrCreate()
 
+  // Read the JSON file into a DataFrame, applying the COMMON_SCHEMA
   val df = spark.read
     .option("multiLine", value = true)
     .option("mode", "PERMISSIVE")
     .schema(COMMON_SCHEMA)
     .json("src/test/resources/sample.jsonl") // path to sample.jsonl
 
+  // Define Pinecone options as a Map
   val pineconeOptions = Map(
     PineconeOptions.PINECONE_API_KEY_CONF -> apiKey,
     PineconeOptions.PINECONE_INDEX_NAME_CONF -> indexName
   )
 
+  // Show if the read was successful
   df.show(df.count().toInt)
 
   df.write
