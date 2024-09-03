@@ -25,7 +25,8 @@ S3 path for assembly jar:
 
 ## Example
 To connect to Pinecone with Spark you'll have to retrieve the api key from [your Pinecone console](https://app.pinecone.io). 
-Navigate to your project and click the "API Keys" button on the sidebar.
+Navigate to your project and click the "API Keys" button on the sidebar. The sample.jsonl file used in the examples below
+can be found [here](https://github.com/pinecone-io/spark-pinecone/blob/main/src/it/resources/sample.jsonl).
 
 ### PySpark
 ```python
@@ -56,7 +57,7 @@ df = spark.read \
     .option("multiLine", value = True) \
     .option("mode", "PERMISSIVE") \
     .schema(COMMON_SCHEMA) \
-    .json("/FileStore/tables/sample-4.jsonl")
+    .json("src/test/resources/sample.jsonl")
 
 # Show if the read was successful
 df.show()
