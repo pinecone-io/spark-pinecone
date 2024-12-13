@@ -15,7 +15,7 @@ class BatchUpsertExample extends AnyFlatSpec with should.Matchers {
       .option("multiLine", value = true)
       .option("mode", "PERMISSIVE")
       .schema(COMMON_SCHEMA)
-      .json("src/it/resources/sample.jsonl")
+      .json("src/it/resources/sample1.jsonl")
       .repartition(2)
 
     df.count() should be(7)
