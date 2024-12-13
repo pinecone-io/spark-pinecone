@@ -5,7 +5,7 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
-class BasicIntegrationSpec extends AnyFlatSpec with should.Matchers {
+class BatchUpsertExample extends AnyFlatSpec with should.Matchers {
   "Run" should "just work" in {
     val conf = new SparkConf()
       .setMaster("local[*]")
