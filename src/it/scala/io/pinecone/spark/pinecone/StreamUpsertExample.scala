@@ -6,7 +6,7 @@ object StreamUpsertExample {
 
   def main(args: Array[String]): Unit = {
 
-    val spark = SparkSession.builder().appName("StructuredNetworkWordCount")
+    val spark = SparkSession.builder().appName("StreamUpsertExample")
       .config("spark.sql.shuffle.partitions", 3)
       .master("local")
       .getOrCreate()
