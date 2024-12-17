@@ -15,20 +15,24 @@ This client currently supports Spark 3.5.0, Scala 2.12.X or 2.13.X and Java 8+.
 Make sure to add the correct JAR file to your project's dependencies according to your Scala version.
 
 ### Databricks and friends
-Due to various libraries provided by Databricks (and other runtimes), please use the assembly jar from s3 for now.
-S3 path for assembly jar: 
-1. v1.1.0 (latest): s3://pinecone-jars/1.1.0/spark-pinecone-uberjar.jar
-2. v1.0.0 (latest): s3://pinecone-jars/1.0.0/spark-pinecone-uberjar.jar 
-3. v0.2.2: s3://pinecone-jars/0.2.2/spark-pinecone-uberjar.jar
-4. v0.2.1: s3://pinecone-jars/0.2.1/spark-pinecone-uberjar.jar
-5. v0.1.4: s3://pinecone-jars/spark-pinecone-uberjar.jar
+Due to various libraries provided by Databricks, please use the assembly jar from s3 to avoid dependency conflict.
+S3 path for assembly jar:
+1. v1.2.0 (latest): s3://pinecone-jars/1.2.0/spark-pinecone-uberjar.jar
+2. v1.1.0: s3://pinecone-jars/1.1.0/spark-pinecone-uberjar.jar
+3. v1.0.0: s3://pinecone-jars/1.0.0/spark-pinecone-uberjar.jar 
+4. v0.2.2: s3://pinecone-jars/0.2.2/spark-pinecone-uberjar.jar
+5. v0.2.1: s3://pinecone-jars/0.2.1/spark-pinecone-uberjar.jar
+6. v0.1.4: s3://pinecone-jars/spark-pinecone-uberjar.jar
 
 ## Example
 To connect to Pinecone with Spark you'll have to retrieve the api key from [your Pinecone console](https://app.pinecone.io). 
 Navigate to your project and click the "API Keys" button on the sidebar. The sample.jsonl file used in the examples below
 can be found [here](https://github.com/pinecone-io/spark-pinecone/blob/main/src/it/resources/sample.jsonl).
 
-### PySpark
+### Batch upsert
+Below are examples in Python and Scala for batch upserting vectors in Pinecone DB.
+
+#### PySpark
 ```python
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
@@ -62,7 +66,7 @@ df = spark.read \
 # Show if the read was successful
 df.show()
 
-# Write the DataFrame to Pinecone 
+# Write the dataFrame to Pinecone in batches 
 df.write \
     .option("pinecone.apiKey", api_key) \
     .option("pinecone.indexName", index_name) \
@@ -105,11 +109,112 @@ object MainApp extends App {
   // Show if the read was successful
   df.show(df.count().toInt)
   
-  // Write the DataFrame to Pinecone using the defined options
+  // Write the DataFrame to Pinecone using the defined options in batches
   df.write
     .options(pineconeOptions)
     .format("io.pinecone.spark.pinecone.Pinecone")
     .mode(SaveMode.Append)
     .save()
+}
+```
+
+
+### Stream upsert
+Below are examples in Python and Scala for streaming upserts of vectors in Pinecone DB.
+
+#### PySpark
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, ArrayType, FloatType, StringType, LongType
+import os
+
+# Your API key and index name
+api_key = os.getenv("PINECONE_API_KEY")
+index_name = os.getenv("PINECONE_INDEX_NAME")
+
+COMMON_SCHEMA = StructType([
+    StructField("id", StringType(), False),
+    StructField("namespace", StringType(), True),
+    StructField("values", ArrayType(FloatType(), False), False),
+    StructField("metadata", StringType(), True),
+    StructField("sparse_values", StructType([
+        StructField("indices", ArrayType(LongType(), False), False),
+        StructField("values", ArrayType(FloatType(), False), False)
+    ]), True)
+])
+
+# Initialize Spark session
+spark = SparkSession.builder \
+    .appName("StreamUpsertExample") \
+    .config("spark.sql.shuffle.partitions", 3) \
+    .master("local") \
+    .getOrCreate()
+
+# Read the stream of JSON files, applying the schema from the input directory
+lines = spark.readStream \
+    .option("multiLine", True) \
+    .option("mode", "PERMISSIVE") \
+    .schema(COMMON_SCHEMA) \
+    .json("path/to/input/directory/")
+
+# Define Pinecone options
+pinecone_options = {
+    "pinecone.apiKey": api_key,
+    "pinecone.indexName": index_name
+}
+
+# Write the stream to Pinecone using the defined options
+upsert = lines.writeStream \
+    .format("io.pinecone.spark.pinecone.Pinecone") \
+    .options(**pinecone_options) \
+    .option("checkpointLocation", "path/to/checkpoint/dir") \
+    .outputMode("append") \
+    .start()
+
+upsert.awaitTermination()
+```
+
+### Scala
+```scala
+import io.pinecone.spark.pinecone.{COMMON_SCHEMA, PineconeOptions}
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.{SaveMode, SparkSession}
+
+object MainApp extends App {
+  // Your API key and index name
+  val apiKey = "PINECONE_API_KEY"
+  val indexName = "PINECONE_INDEX_NAME"
+
+  // Create a Spark session
+  val spark = SparkSession.builder()
+    .appName("StreamUpsertExample")
+    .config("spark.sql.shuffle.partitions", 3)
+    .master("local")
+    .getOrCreate()
+
+  // Read the JSON files into a DataFrame, applying the COMMON_SCHEMA from input directory
+  val lines = spark.readStream
+    .option("multiLine", value = true)
+    .option("mode", "PERMISSIVE")
+    .schema(COMMON_SCHEMA)
+    .json("path/to/input/directory/")
+
+  // Define Pinecone options as a Map
+  val pineconeOptions = Map(
+    PineconeOptions.PINECONE_API_KEY_CONF -> System.getenv("PINECONE_API_KEY"),
+    PineconeOptions.PINECONE_INDEX_NAME_CONF -> System.getenv("PINECONE_INDEX"),
+    PineconeOptions.PINECONE_SOURCE_TAG_CONF -> System.getenv("PINECONE_SOURCE_TAG")
+  )
+
+  // Write the stream to Pinecone using the defined options
+  val upsert = lines
+    .writeStream
+    .format("io.pinecone.spark.pinecone.Pinecone")
+    .options(pineconeOptions)
+    .option("checkpointLocation", "path/to/checkpoint/dir")
+    .outputMode("append")
+    .start()
+
+  upsert.awaitTermination()
 }
 ```

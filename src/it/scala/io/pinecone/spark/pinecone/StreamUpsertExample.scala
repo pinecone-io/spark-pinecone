@@ -23,7 +23,7 @@ object StreamUpsertExample {
       PineconeOptions.PINECONE_SOURCE_TAG_CONF -> System.getenv("PINECONE_SOURCE_TAG")
     )
 
-    val query = lines
+    val upsert = lines
       .writeStream
       .format("io.pinecone.spark.pinecone.Pinecone")
       .options(pineconeOptions)
@@ -31,6 +31,6 @@ object StreamUpsertExample {
       .outputMode("append")
       .start()
 
-    query.awaitTermination()
+    upsert.awaitTermination()
   }
 }
