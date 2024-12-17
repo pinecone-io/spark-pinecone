@@ -1,0 +1,110 @@
+[
+  {
+    "id": "v8",
+    "namespace": "example-namespace2",
+    "values": [
+      1,
+      2,
+      3
+    ],
+    "metadata": {
+      "hello": [
+        "world",
+        "you"
+      ],
+      "some_string": "or not",
+      "actual_number": 5.2,
+      "round": 3
+    },
+    "sparse_values": {
+      "indices": [
+        0,
+        2,
+        4294967295
+      ],
+      "values": [
+        4.5,
+        5.5,
+        5
+      ]
+    }
+  },
+  {
+    "id": "v9",
+    "values": [
+      3,
+      2,
+      1
+    ]
+  },
+  {
+    "namespace": "example-namespace2",
+    "values": [
+      1,
+      4,
+      9
+    ],
+    "id": "v10",
+    "metadata": ""
+  },
+  {
+    "id": "v11",
+    "namespace": "example-namespace2",
+    "values": [
+      1,
+      1,
+      2
+    ],
+    "metadata": {
+      "key": "value"
+    }
+  },
+  {
+    "id": "v12",
+    "namespace": "example-namespace2",
+    "values": [
+      3,
+      5,
+      8
+    ],
+    "metadata": {
+      "key": "value"
+    },
+    "sparse_values": {
+      "indices": [
+        1
+      ],
+      "values": [
+        4
+      ]
+    }
+  },
+  {
+    "id": "v13",
+    "namespace": "example-namespace2",
+    "values": [
+      13,
+      21,
+      34
+    ],
+    "metadata": ""
+  },
+  {
+    "id": "v14",
+    "namespace": "example-namespace2",
+    "values": [
+      5,
+      6,
+      7
+    ],
+    "metadata": {
+      "hello": [
+        "world",
+        "you"
+      ],
+      "some_string": "or not",
+      "actual_number": 5.2,
+      "round": 3
+    }
+  }
+]

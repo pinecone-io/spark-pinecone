@@ -1,7 +1,7 @@
 [
   {
     "id": "v1",
-    "namespace": "default",
+    "namespace": "example-namespace1",
     "values": [
       1,
       2,
@@ -38,7 +38,7 @@
     ]
   },
   {
-    "namespace": "default",
+    "namespace": "example-namespace1",
     "values": [
       1,
       4,
@@ -49,7 +49,7 @@
   },
   {
     "id": "v4",
-    "namespace": "",
+    "namespace": "example-namespace1",
     "values": [
       1,
       1,
@@ -61,7 +61,7 @@
   },
   {
     "id": "v5",
-    "namespace": "default",
+    "namespace": "example-namespace1",
     "values": [
       3,
       5,
@@ -81,7 +81,7 @@
   },
   {
     "id": "v6",
-    "namespace": "default",
+    "namespace": "example-namespace1",
     "values": [
       13,
       21,
@@ -91,7 +91,7 @@
   },
   {
     "id": "v7",
-    "namespace": "default",
+    "namespace": "example-namespace1",
     "values": [
       5,
       6,

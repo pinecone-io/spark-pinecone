@@ -5,7 +5,7 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
-class BasicIntegrationSpec extends AnyFlatSpec with should.Matchers {
+class BatchUpsertExample extends AnyFlatSpec with should.Matchers {
   "Run" should "just work" in {
     val conf = new SparkConf()
       .setMaster("local[*]")
@@ -15,7 +15,7 @@ class BasicIntegrationSpec extends AnyFlatSpec with should.Matchers {
       .option("multiLine", value = true)
       .option("mode", "PERMISSIVE")
       .schema(COMMON_SCHEMA)
-      .json("src/it/resources/sample.jsonl")
+      .json("src/it/resources/sample1.jsonl")
       .repartition(2)
 
     df.count() should be(7)
