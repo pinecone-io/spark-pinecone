@@ -32,7 +32,7 @@ can be found [here](https://github.com/pinecone-io/spark-pinecone/blob/main/src/
 ### Batch upsert
 Below are examples in Python and Scala for batch upserting vectors in Pinecone DB.
 
-#### PySpark
+#### Python
 ```python
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
@@ -41,6 +41,7 @@ from pyspark.sql.types import StructType, StructField, ArrayType, FloatType, Str
 # Your API key and index name
 api_key = "PINECONE_API_KEY"
 index_name = "PINECONE_INDEX_NAME"
+source_tag = "PINECONE_SOURCE_TAG"
 
 COMMON_SCHEMA = StructType([
     StructField("id", StringType(), False),
@@ -70,6 +71,7 @@ df.show()
 df.write \
     .option("pinecone.apiKey", api_key) \
     .option("pinecone.indexName", index_name) \
+    .option("pinecone.sourceTag", source_tag) \
     .format("io.pinecone.spark.pinecone.Pinecone") \
     .mode("append") \
     .save()
@@ -85,6 +87,7 @@ object MainApp extends App {
   // Your API key and index name
   val apiKey = "PINECONE_API_KEY"
   val indexName = "PINECONE_INDEX_NAME"
+  val sourceTag = "PINECONE_SOURCE_TAG"
 
   // Configure Spark to run locally with all available cores
   val conf = new SparkConf()
@@ -103,7 +106,8 @@ object MainApp extends App {
   // Define Pinecone options as a Map
   val pineconeOptions = Map(
     PineconeOptions.PINECONE_API_KEY_CONF -> apiKey,
-    PineconeOptions.PINECONE_INDEX_NAME_CONF -> indexName
+    PineconeOptions.PINECONE_INDEX_NAME_CONF -> indexName,
+    PineconeOptions.PINECONE_SOURCE_TAG_CONF -> sourceTag
   )
 
   // Show if the read was successful
@@ -122,15 +126,16 @@ object MainApp extends App {
 ### Stream upsert
 Below are examples in Python and Scala for streaming upserts of vectors in Pinecone DB.
 
-#### PySpark
+#### Python
 ```python
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, ArrayType, FloatType, StringType, LongType
 import os
 
 # Your API key and index name
-api_key = os.getenv("PINECONE_API_KEY")
-index_name = os.getenv("PINECONE_INDEX_NAME")
+api_key = "PINECONE_API_KEY"
+index_name = "PINECONE_INDEX_NAME"
+source_tag = "PINECONE_SOURCE_TAG"
 
 COMMON_SCHEMA = StructType([
     StructField("id", StringType(), False),
@@ -157,16 +162,12 @@ lines = spark.readStream \
     .schema(COMMON_SCHEMA) \
     .json("path/to/input/directory/")
 
-# Define Pinecone options
-pinecone_options = {
-    "pinecone.apiKey": api_key,
-    "pinecone.indexName": index_name
-}
-
 # Write the stream to Pinecone using the defined options
 upsert = lines.writeStream \
     .format("io.pinecone.spark.pinecone.Pinecone") \
-    .options(**pinecone_options) \
+    .option("pinecone.apiKey", api_key) \
+    .option("pinecone.indexName", index_name) \
+    .option("pinecone.sourceTag", source_tag) \
     .option("checkpointLocation", "path/to/checkpoint/dir") \
     .outputMode("append") \
     .start()
